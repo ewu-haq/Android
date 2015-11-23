@@ -14,12 +14,12 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 
 public class MapSample extends AppCompatActivity {
 
     GoogleMap mMap;
     private static final int ERROR_DIALOG_REQUEST = 9000;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,14 +28,23 @@ public class MapSample extends AppCompatActivity {
         if(servicesOkay())
         {
             setContentView(R.layout.activity_map);
-            Toast.makeText(this,"Mapping is ready to display",Toast.LENGTH_SHORT).show();
+
+            if(InitMap())
+            {
+                Toast.makeText(this,"Mapping is ready to display",Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(this,"Mapping is NOT connected",Toast.LENGTH_SHORT).show();
+            }
+
         }else
         {
             setContentView(R.layout.activity_map_sample);
         }
 
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         //fab.setOnClickListener(new View.OnClickListener() {
@@ -83,5 +92,16 @@ public class MapSample extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    private boolean InitMap()
+    {
+        if(mMap == null)
+        {
+            SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            mMap = supportMapFragment.getMap();
+        }
+
+        return mMap != null;
     }
 }
