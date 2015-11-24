@@ -4,11 +4,13 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -16,9 +18,13 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.util.List;
+
 public class MapSample extends AppCompatActivity {
 
-    GoogleMap mMap;
+    private GoogleMap mMap;
+    private DrawerLayout drawerLayout;
+    private ListView listView;
     private static final int ERROR_DIALOG_REQUEST = 9000;
 
     @Override
@@ -28,7 +34,8 @@ public class MapSample extends AppCompatActivity {
         if(servicesOkay())
         {
             setContentView(R.layout.activity_map);
-
+            drawerLayout = (DrawerLayout)findViewById(R.id.DrawerLayout);
+            listView = (ListView) findViewById(R.id.drawerList);
             if(InitMap())
             {
                 Toast.makeText(this,"Mapping is ready to display",Toast.LENGTH_SHORT).show();

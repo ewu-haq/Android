@@ -2,4 +2,9 @@
     <string name="app_name">MapSampleApp</string>
     <string name="action_settings">Settings</string>
     <string name="search">Search</string>
+
+    <string-array name="MenuOptions">
+        <item>Search</item>
+        <item>To-do List</item>
+    </string-array>
 </resources>
