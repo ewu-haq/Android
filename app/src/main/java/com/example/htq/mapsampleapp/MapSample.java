@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,11 +22,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.List;
 
-public class MapSample extends AppCompatActivity {
+public class MapSample extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private GoogleMap mMap;
     private DrawerLayout drawerLayout;
     private ListView listView;
+    private String[] menuOptions;
     private static final int ERROR_DIALOG_REQUEST = 9000;
 
     @Override
@@ -35,7 +38,10 @@ public class MapSample extends AppCompatActivity {
         {
             setContentView(R.layout.activity_map);
             drawerLayout = (DrawerLayout)findViewById(R.id.DrawerLayout);
+            menuOptions = getResources().getStringArray(R.array.MenuOptions);
             listView = (ListView) findViewById(R.id.drawerList);
+            listView.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,menuOptions));
+            listView.setOnItemClickListener(this);
             if(InitMap())
             {
                 Toast.makeText(this,"Mapping is ready to display",Toast.LENGTH_SHORT).show();
@@ -61,6 +67,23 @@ public class MapSample extends AppCompatActivity {
         //                .setAction("Action", null).show();
         //    }
         //});
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(this,menuOptions[position] + " is clicked",Toast.LENGTH_SHORT).show();
+        SelectItem(position);
+    }
+
+    private void SelectItem(int position)
+    {
+        listView.setItemChecked(position,true);
+        SetTitle(menuOptions[position]);
+    }
+
+    private void SetTitle(String title)
+    {
+        getSupportActionBar().setTitle(title);
     }
 
     @Override
