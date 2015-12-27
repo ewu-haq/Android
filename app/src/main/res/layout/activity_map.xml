@@ -40,7 +40,8 @@
                 android:id="@+id/searchEditText"
                 android:inputType="textCapWords"
                 android:ems="10"
-                android:layout_weight="3" />
+                android:layout_weight="3"
+                android:hint="@string/search_hint"/>
 
             <Button
                 android:id="@+id/searchButton"
@@ -57,7 +58,8 @@
             android:id="@+id/locationsListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            android:textColor="#000">
         </ListView>
     </LinearLayout>
 
@@ -73,13 +75,6 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 </LinearLayout>
-
-    <ListView
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
-        android:id="@+id/drawerList"
-        android:entries="@array/MenuOptions"
-        android:layout_gravity="left"></ListView>
 
 </android.support.v4.widget.DrawerLayout>
 

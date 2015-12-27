@@ -7,9 +7,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -18,13 +23,16 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapSample extends AppCompatActivity {
 
     private GoogleMap mMap;
-    private DrawerLayout drawerLayout;
-    private ListView listView;
+    private EditText _searchEditText;
+    private Button _searchButton;
+    private DrawerLayout _drawerLayout;
+    private ListView _listView;
     private static final int ERROR_DIALOG_REQUEST = 9000;
 
     @Override
@@ -34,8 +42,12 @@ public class MapSample extends AppCompatActivity {
         if(servicesOkay())
         {
             setContentView(R.layout.activity_map);
-            drawerLayout = (DrawerLayout)findViewById(R.id.DrawerLayout);
-            listView = (ListView) findViewById(R.id.drawerList);
+            //inital values
+            _drawerLayout = (DrawerLayout)findViewById(R.id.DrawerLayout);
+            _listView = (ListView) findViewById(R.id.locationsListView);
+            _searchEditText = (EditText) findViewById(R.id.searchEditText);
+            _searchButton = (Button) findViewById(R.id.searchButton);
+
             if(InitMap())
             {
                 Toast.makeText(this,"Mapping is ready to display",Toast.LENGTH_SHORT).show();
@@ -53,6 +65,32 @@ public class MapSample extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
+        // set up search listerner
+        _searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                List<String> typedCharacters = new ArrayList<String>();
+                SetLocationsViewAdapter(typedCharacters);
+                for (int i = 0; i < s.length(); i++) {
+                    typedCharacters.add(s.subSequence(0,i).toString());
+                }
+
+                SetLocationsViewAdapter(typedCharacters);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         //fab.setOnClickListener(new View.OnClickListener() {
         //    @Override
@@ -61,6 +99,13 @@ public class MapSample extends AppCompatActivity {
         //                .setAction("Action", null).show();
         //    }
         //});
+    }
+
+    private void SetLocationsViewAdapter(List<String> locations)
+    {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+                android.R.layout.simple_list_item_1, locations);
+        _listView.setAdapter(adapter);
     }
 
     @Override
