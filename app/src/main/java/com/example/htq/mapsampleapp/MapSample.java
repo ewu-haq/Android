@@ -12,9 +12,14 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,13 +31,19 @@ import com.google.android.gms.maps.SupportMapFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapSample extends AppCompatActivity {
+public class MapSample extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private GoogleMap mMap;
+
     private EditText _searchEditText;
     private Button _searchButton;
     private DrawerLayout _drawerLayout;
     private ListView _listView;
+
+    private DrawerLayout drawerLayout;
+    private ListView listView;
+    private String[] menuOptions;
+
     private static final int ERROR_DIALOG_REQUEST = 9000;
 
     @Override
@@ -42,11 +53,19 @@ public class MapSample extends AppCompatActivity {
         if(servicesOkay())
         {
             setContentView(R.layout.activity_map);
+
             //inital values
             _drawerLayout = (DrawerLayout)findViewById(R.id.DrawerLayout);
             _listView = (ListView) findViewById(R.id.locationsListView);
             _searchEditText = (EditText) findViewById(R.id.searchEditText);
             _searchButton = (Button) findViewById(R.id.searchButton);
+
+
+            drawerLayout = (DrawerLayout)findViewById(R.id.DrawerLayout);
+            menuOptions = getResources().getStringArray(R.array.MenuOptions);
+            listView = (ListView) findViewById(R.id.drawerList);
+            listView.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,menuOptions));
+            listView.setOnItemClickListener(this);
 
             if(InitMap())
             {
@@ -106,6 +125,23 @@ public class MapSample extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
                 android.R.layout.simple_list_item_1, locations);
         _listView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(this,menuOptions[position] + " is clicked",Toast.LENGTH_SHORT).show();
+        SelectItem(position);
+    }
+
+    private void SelectItem(int position)
+    {
+        listView.setItemChecked(position,true);
+        SetTitle(menuOptions[position]);
+    }
+
+    private void SetTitle(String title)
+    {
+        getSupportActionBar().setTitle(title);
     }
 
     @Override
