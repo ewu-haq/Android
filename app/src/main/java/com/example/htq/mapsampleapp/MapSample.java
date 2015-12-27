@@ -2,8 +2,6 @@ package com.example.htq.mapsampleapp;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import android.widget.ListView;
 import android.widget.Toast;
@@ -38,10 +35,8 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
     private EditText _searchEditText;
     private Button _searchButton;
     private DrawerLayout _drawerLayout;
-    private ListView _listView;
-
-    private DrawerLayout drawerLayout;
-    private ListView listView;
+    private ListView _locationListView;
+    private ListView _optionsListView;
     private String[] menuOptions;
 
     private static final int ERROR_DIALOG_REQUEST = 9000;
@@ -53,19 +48,6 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
         if(servicesOkay())
         {
             setContentView(R.layout.activity_map);
-
-            //inital values
-            _drawerLayout = (DrawerLayout)findViewById(R.id.DrawerLayout);
-            _listView = (ListView) findViewById(R.id.locationsListView);
-            _searchEditText = (EditText) findViewById(R.id.searchEditText);
-            _searchButton = (Button) findViewById(R.id.searchButton);
-
-
-            drawerLayout = (DrawerLayout)findViewById(R.id.DrawerLayout);
-            menuOptions = getResources().getStringArray(R.array.MenuOptions);
-            listView = (ListView) findViewById(R.id.drawerList);
-            listView.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,menuOptions));
-            listView.setOnItemClickListener(this);
 
             if(InitMap())
             {
@@ -84,9 +66,15 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        _drawerLayout = (DrawerLayout)findViewById(R.id.DrawerLayout);
+        _optionsListView =(ListView) findViewById(R.id.drawerList);
+        menuOptions = getResources().getStringArray(R.array.MenuOptions);
+        _optionsListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, menuOptions));
+        _optionsListView.setOnItemClickListener(this);
 
-
-        // set up search listerner
+        _searchButton = (Button) findViewById(R.id.searchButton);
+        _locationListView = (ListView) findViewById(R.id.locationsListView);
+        _searchEditText = (EditText)findViewById(R.id.searchEditText);
         _searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -97,12 +85,12 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 List<String> typedCharacters = new ArrayList<String>();
-                SetLocationsViewAdapter(typedCharacters);
+                SetLocationsViewAdapter(typedCharacters,_locationListView);
                 for (int i = 0; i < s.length(); i++) {
                     typedCharacters.add(s.subSequence(0,i).toString());
                 }
 
-                SetLocationsViewAdapter(typedCharacters);
+                SetLocationsViewAdapter(typedCharacters,_locationListView);
             }
 
             @Override
@@ -110,21 +98,13 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
 
             }
         });
-        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        //fab.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View view) {
-        //        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        //                .setAction("Action", null).show();
-        //    }
-        //});
     }
 
-    private void SetLocationsViewAdapter(List<String> locations)
+    private void SetLocationsViewAdapter(List<String> locations,ListView listview)
     {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
                 android.R.layout.simple_list_item_1, locations);
-        _listView.setAdapter(adapter);
+        listview.setAdapter(adapter);
     }
 
     @Override
@@ -135,7 +115,7 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
 
     private void SelectItem(int position)
     {
-        listView.setItemChecked(position,true);
+        _optionsListView.setItemChecked(position, true);
         SetTitle(menuOptions[position]);
     }
 
