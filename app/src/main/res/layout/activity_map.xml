@@ -75,6 +75,12 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 </LinearLayout>
-
+    <ListView
+        android:background="#FF8800"
+        android:divider="@null"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:id="@+id/drawerList"
+        android:layout_gravity="left"></ListView>
 </android.support.v4.widget.DrawerLayout>
 
