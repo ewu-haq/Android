@@ -1,6 +1,8 @@
 package com.example.htq.mapsampleapp;
 
 import android.app.Dialog;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +28,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,15 +86,24 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count){
 
                 List<String> typedCharacters = new ArrayList<String>();
                 SetLocationsViewAdapter(typedCharacters,_locationListView);
-                for (int i = 0; i < s.length(); i++) {
+                /*for (int i = 0; i < s.length(); i++) {
                     typedCharacters.add(s.subSequence(0,i).toString());
-                }
+                }*/
 
-                SetLocationsViewAdapter(typedCharacters,_locationListView);
+                Geocoder gc = new Geocoder(getApplicationContext());
+                try {
+                    List<Address> list = gc.getFromLocationName(s.toString(),4);
+                    for (int i = 0; i < list.size(); i++) {
+                        typedCharacters.add(list.get(i).toString());
+                    }
+                    SetLocationsViewAdapter(typedCharacters,_locationListView);
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(),"Search Failed",Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -98,6 +111,12 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
 
             }
         });
+    }
+
+    private void HideSoftKeyboard(View v)
+    {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(),0);
     }
 
     private void SetLocationsViewAdapter(List<String> locations,ListView listview)
