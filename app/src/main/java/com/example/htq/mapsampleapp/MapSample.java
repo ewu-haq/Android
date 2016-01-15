@@ -42,8 +42,10 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
     private ListView _locationListView;
     private ListView _optionsListView;
     private String[] menuOptions;
+    private ArrayAdapter<Location> mAdapter;
 
     private static final int ERROR_DIALOG_REQUEST = 9000;
+    private static final int NUMBER_OF_LOCATIONS = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,27 +90,29 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count){
 
-                List<String> typedCharacters = new ArrayList<String>();
-                SetLocationsViewAdapter(typedCharacters,_locationListView);
-                /*for (int i = 0; i < s.length(); i++) {
-                    typedCharacters.add(s.subSequence(0,i).toString());
-                }*/
-
-                Geocoder gc = new Geocoder(getApplicationContext());
-                try {
-                    List<Address> list = gc.getFromLocationName(s.toString(),4);
-                    for (int i = 0; i < list.size(); i++) {
-                        typedCharacters.add(list.get(i).toString());
-                    }
-                    SetLocationsViewAdapter(typedCharacters,_locationListView);
-                } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(),"Search Failed",Toast.LENGTH_SHORT).show();
-                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                // avoid if typing is too short
+                if(s.length() <3)
+                {
+                    return;
+                }
 
+                List<Location> locations = new ArrayList<Location>();
+                SetLocationsViewAdapter(locations,_locationListView);
+
+                Geocoder gc = new Geocoder(getApplicationContext());
+                try {
+                    List<Address> list = gc.getFromLocationName(s.toString(),NUMBER_OF_LOCATIONS);
+                    for (int i = 0; i < list.size(); i++) {
+                        locations.add(new Location(list.get(i).getFeatureName(),String.valueOf(list.get(i).getLatitude())));
+                    }
+                    SetLocationsViewAdapter(locations,_locationListView);
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(),"Search Failed",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -119,11 +123,10 @@ public class MapSample extends AppCompatActivity implements AdapterView.OnItemCl
         imm.hideSoftInputFromWindow(v.getWindowToken(),0);
     }
 
-    private void SetLocationsViewAdapter(List<String> locations,ListView listview)
+    private void SetLocationsViewAdapter(List<Location> locations,ListView listview)
     {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
-                android.R.layout.simple_list_item_1, locations);
-        listview.setAdapter(adapter);
+        mAdapter = new LocationItemAdapter(this,R.layout.location_item_layout,locations);
+        listview.setAdapter(mAdapter);
     }
 
     @Override
